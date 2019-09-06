@@ -4,56 +4,39 @@
 #
 Name     : compat-ipset-soname10
 Version  : 6.34
-Release  : 3
+Release  : 4
 URL      : http://ipset.netfilter.org/ipset-6.34.tar.bz2
 Source0  : http://ipset.netfilter.org/ipset-6.34.tar.bz2
 Summary  : Userspace library for the ipset extensions and the kernel interface
 Group    : Development/Tools
 License  : GPL-2.0 LGPL-2.1
-Requires: compat-ipset-soname10-bin
-Requires: compat-ipset-soname10-lib
-Requires: compat-ipset-soname10-doc
+Requires: compat-ipset-soname10-lib = %{version}-%{release}
+Requires: compat-ipset-soname10-license = %{version}-%{release}
 BuildRequires : grep
 BuildRequires : pkgconfig(libmnl)
+# Suppress generation of debuginfo
+%global debug_package %{nil}
 
 %description
 This is the ipset source tree. Follow the next steps to install ipset.
 If you upgrade from an earlier 5.x release, please read the UPGRADE
 instructions too.
 
-%package bin
-Summary: bin components for the compat-ipset-soname10 package.
-Group: Binaries
-
-%description bin
-bin components for the compat-ipset-soname10 package.
-
-
-%package dev
-Summary: dev components for the compat-ipset-soname10 package.
-Group: Development
-Requires: compat-ipset-soname10-lib
-Requires: compat-ipset-soname10-bin
-Provides: compat-ipset-soname10-devel
-
-%description dev
-dev components for the compat-ipset-soname10 package.
-
-
-%package doc
-Summary: doc components for the compat-ipset-soname10 package.
-Group: Documentation
-
-%description doc
-doc components for the compat-ipset-soname10 package.
-
-
 %package lib
 Summary: lib components for the compat-ipset-soname10 package.
 Group: Libraries
+Requires: compat-ipset-soname10-license = %{version}-%{release}
 
 %description lib
 lib components for the compat-ipset-soname10 package.
+
+
+%package license
+Summary: license components for the compat-ipset-soname10 package.
+Group: Default
+
+%description license
+license components for the compat-ipset-soname10 package.
 
 
 %prep
@@ -63,8 +46,9 @@ lib components for the compat-ipset-soname10 package.
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
-export LANG=C
-export SOURCE_DATE_EPOCH=1523398742
+export LANG=C.UTF-8
+export SOURCE_DATE_EPOCH=1567812301
+export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
 export NM=gcc-nm
@@ -76,51 +60,51 @@ export CXXFLAGS="$CXXFLAGS -O3 -Os -fdata-sections -ffat-lto-objects -ffunction-
 make  %{?_smp_mflags}
 
 %check
-export LANG=C
+export LANG=C.UTF-8
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 make VERBOSE=1 V=1 %{?_smp_mflags} check
 
 %install
-export SOURCE_DATE_EPOCH=1523398742
+export SOURCE_DATE_EPOCH=1567812301
 rm -rf %{buildroot}
+mkdir -p %{buildroot}/usr/share/package-licenses/compat-ipset-soname10
+cp COPYING %{buildroot}/usr/share/package-licenses/compat-ipset-soname10/COPYING
+cp libltdl/COPYING.LIB %{buildroot}/usr/share/package-licenses/compat-ipset-soname10/libltdl_COPYING.LIB
 %make_install
+## Remove excluded files
+rm -f %{buildroot}/usr/bin/ipset
+rm -f %{buildroot}/usr/include/libipset/data.h
+rm -f %{buildroot}/usr/include/libipset/errcode.h
+rm -f %{buildroot}/usr/include/libipset/linux_ip_set.h
+rm -f %{buildroot}/usr/include/libipset/linux_ip_set_bitmap.h
+rm -f %{buildroot}/usr/include/libipset/linux_ip_set_hash.h
+rm -f %{buildroot}/usr/include/libipset/linux_ip_set_list.h
+rm -f %{buildroot}/usr/include/libipset/mnl.h
+rm -f %{buildroot}/usr/include/libipset/nf_inet_addr.h
+rm -f %{buildroot}/usr/include/libipset/nfproto.h
+rm -f %{buildroot}/usr/include/libipset/parse.h
+rm -f %{buildroot}/usr/include/libipset/pfxlen.h
+rm -f %{buildroot}/usr/include/libipset/print.h
+rm -f %{buildroot}/usr/include/libipset/session.h
+rm -f %{buildroot}/usr/include/libipset/transport.h
+rm -f %{buildroot}/usr/include/libipset/types.h
+rm -f %{buildroot}/usr/include/libipset/ui.h
+rm -f %{buildroot}/usr/include/libipset/utils.h
+rm -f %{buildroot}/usr/lib64/libipset.so
+rm -f %{buildroot}/usr/lib64/pkgconfig/libipset.pc
+rm -f %{buildroot}/usr/share/man/man8/ipset.8
 
 %files
 %defattr(-,root,root,-)
-
-%files bin
-%defattr(-,root,root,-)
-%exclude /usr/bin/ipset
-
-%files dev
-%defattr(-,root,root,-)
-%exclude /usr/include/libipset/data.h
-%exclude /usr/include/libipset/errcode.h
-%exclude /usr/include/libipset/linux_ip_set.h
-%exclude /usr/include/libipset/linux_ip_set_bitmap.h
-%exclude /usr/include/libipset/linux_ip_set_hash.h
-%exclude /usr/include/libipset/linux_ip_set_list.h
-%exclude /usr/include/libipset/mnl.h
-%exclude /usr/include/libipset/nf_inet_addr.h
-%exclude /usr/include/libipset/nfproto.h
-%exclude /usr/include/libipset/parse.h
-%exclude /usr/include/libipset/pfxlen.h
-%exclude /usr/include/libipset/print.h
-%exclude /usr/include/libipset/session.h
-%exclude /usr/include/libipset/transport.h
-%exclude /usr/include/libipset/types.h
-%exclude /usr/include/libipset/ui.h
-%exclude /usr/include/libipset/utils.h
-%exclude /usr/lib64/libipset.so
-%exclude /usr/lib64/pkgconfig/libipset.pc
-
-%files doc
-%defattr(-,root,root,-)
-%exclude /usr/share/man/man8/ipset.8
 
 %files lib
 %defattr(-,root,root,-)
 /usr/lib64/libipset.so.3
 /usr/lib64/libipset.so.3.7.0
+
+%files license
+%defattr(0644,root,root,0755)
+/usr/share/package-licenses/compat-ipset-soname10/COPYING
+/usr/share/package-licenses/compat-ipset-soname10/libltdl_COPYING.LIB
